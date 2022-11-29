@@ -33,7 +33,7 @@ export const createServiceType = async (req,res)=>{
   try {
     const { type_name,description,image,admin_author} = req.body
     
-    const check = await ServiceTypeModel.findOne({name:type_name})
+    const check = await ServiceTypeModel.findOne({type_name:type_name})
   
     if(check) return failedReq(404,"Already have this one",res)
     const newType =  await new ServiceTypeModel({...req.body,image:`https://api.bioklaw.tech/${req.file.path}`,admin_author:req.user.id})
@@ -49,6 +49,42 @@ export const createServiceType = async (req,res)=>{
 
 
 }
+export const noDataModel = [{
+  _id:"no data",
+  status:" no data "
+}]
+export const getAllServicesType = async (req,res)=>{
+  try {
+    const allTypes = await ServiceTypeModel.find().populate("admin_author","name role")
+    return successReq(200,allTypes,res)
+  } catch (error) {
+    return failedReq(500,error,res)
+  }
+} 
+export const getAllServicesTypeClient = async (req,res)=>{
+  try {
+    const allTypes = await ServiceTypeModel.find({},{ type_name:1,image:1,description:1})
+    return successReq(200,{data:allTypes},res)
+  } catch (error) {
+    return failedReq(500,error,res)
+  }
+} 
+
+export const deleteManyServicesType = async (req,res)=>{
+  try {
+
+    // objects=req.body.ids
+
+    await ServiceTypeModel.deleteMany({_id: { $in: req.body.ids}})
+   
+     await createLogs(`Delete serive type:${"unknown"}`,"create","delete",req.user.id,null)
+     return successReq(200,"deleted",res)
+  } catch (error) {
+    return failedReq(500,error,res)
+  }
+}
+
+
 var storageProduct = multer.diskStorage({
   destination:(req,file,cb)=>{
     cb(null,'uploads')
@@ -134,4 +170,30 @@ export const action = {
 
 export const at ={
   vendorForm:"vender-form"
+}
+
+export const modelStatusFilter= async (req,model,populate,option) =>{
+   
+  let {status} = req.query
+   
+  if(!status||status=='none'){
+    return await model.find({vendor_id:req.user.id},option).populate(
+      {
+        path:populate.path,
+        select:populate.select
+      }
+    )
+  }
+
+  return await model.find({ $and: [
+    {vendor_id:req.user.id},
+    req.query
+]},option ).populate(   {
+  path:populate.path,
+  select:populate.select
+})
+
+
+
+
 }

@@ -13,9 +13,27 @@ const schema = new mongoose.Schema({
     default:"Pending"
   },
   vendor_address: {
-    type:String,
-    required:true
+    city:{
+      type:String
+    },
+    district:{
+      type:String
+    },
+    ward:{
+      type:String
+    },
+    street:{
+      type:String
+    }
+
   },
+  
+  service_type:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"ServiceType",
+   
+  }]
+  ,
   business_desc: {
     type:mongoose.Schema.Types.Mixed,
   },
@@ -39,19 +57,12 @@ const schema = new mongoose.Schema({
     required:true
   },
 
-  worker_list:[{
-    
-    worker_status:{
-        type:String,
-        enum:["available","busy","working"],
-        default:"available"
-    },
-    worker:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Account",
-  }}],
+
 
   
 
 },{timestamps:true})
+
+
+
 export const VendorFormModel = mongoose.model("VendorForm",schema)

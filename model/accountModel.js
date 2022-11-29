@@ -37,6 +37,7 @@ const schema = new mongoose.Schema({
     enum:['Activated','Suspended','Deleted','Deactivated'],
     default:'Deactivated'
   },
+  
   transaction_history:[{
     type:mongoose.Schema.Types.ObjectId,
     ref:"Transaction"

@@ -10,18 +10,50 @@ const schema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"Account"
   },
+  phone:{
+    type:String,
+  },
+  name:{
+    type:String,
+  },
   service_id:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:"Account"
+    ref:"Service"
   },
-  job_address:{
-    type:String,
-    required:true
+  //job_address
+  address: {
+    city:{
+      type:String
+    },
+    district:{
+      type:String
+    },
+    ward:{
+      type:String
+    },
+    street:{
+      type:String
+    }
+
   },
   transaction_status:{
     type:String,
-    enum:['Pending Confirmation','Standby','Traveling','Working','Completed','Canceled']
+    enum:['Pending Confirmation','Standby','Handling','Completed','Canceled'],
+    default:"Pending Confirmation"
   },
+
+  geoGraph:{
+    lng:{
+      type:String,
+      
+    },
+    lat:{
+      type:String,
+     
+    }
+  }
+  ,
+
   feedback_from_vendor:{
     type:String,
   },
